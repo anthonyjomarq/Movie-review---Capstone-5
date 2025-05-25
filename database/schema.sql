@@ -42,10 +42,21 @@ CREATE TRIGGER update_media_reviews_updated_at
 
 -- some test data
 INSERT INTO media_reviews (title, media_type, rating, review_text, notes) VALUES
-('The Matrix', 'movie', 9, 'Really good sci-fi movie', 'Amazing movie, great plot for such a old movie'),
-('Attack on Titan', 'anime', 10, 'Amazing anime series', 'My favorite!'),
+('The Matrix', 'movie', 9, 'Really good sci-fi movie', 'Mind bending plot especially for how long ago it was released'),
+('Attack on Titan', 'anime', 10, 'Amazing anime series', 'My favorite series/anime ever'),
 ('Breaking Bad', 'tv', 10, 'Best TV show ever', 'Walter White is incredible')
 ON CONFLICT DO NOTHING;
+
+-- stats view for dashboard
+CREATE OR REPLACE VIEW media_stats AS
+SELECT 
+    COUNT(*) as total_reviews,
+    COUNT(*) FILTER (WHERE media_type = 'movie') as movie_count,
+    COUNT(*) FILTER (WHERE media_type = 'tv') as tv_count,
+    COUNT(*) FILTER (WHERE media_type = 'anime') as anime_count,
+    ROUND(AVG(rating), 1) as average_rating,
+    MAX(created_at) as last_review_added
+FROM media_reviews;
 
 -- View to get statistics (for dashboard)
 CREATE OR REPLACE VIEW media_stats AS

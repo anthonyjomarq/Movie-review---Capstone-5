@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import { testConnection, getStats, getAllReviews } from "./database/db.js";
 
 dotenv.config();
 
@@ -20,12 +21,39 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// main route
-app.get("/", (req, res) => {
-  res.render("index", {
-    title: "Media Review Tracker",
-    message: "Welcome to your personal media review tracker!",
-  });
+// main route - now with real data!
+app.get("/", async (req, res) => {
+  try {
+    const stats = await getStats();
+    res.render("index", {
+      title: "Media Review Tracker",
+      message: "Welcome to your personal media review tracker!",
+      stats: stats || { movie_count: 0, tv_count: 0, anime_count: 0 },
+    });
+  } catch (error) {
+    console.error("Error getting stats:", error);
+    // fallback to zeros if database fails
+    res.render("index", {
+      title: "Media Review Tracker",
+      message: "Welcome to your personal media review tracker!",
+      stats: { movie_count: 0, tv_count: 0, anime_count: 0 },
+    });
+  }
+});
+
+// test database connection
+app.get("/db-test", async (req, res) => {
+  const isConnected = await testConnection();
+  if (isConnected) {
+    const reviews = await getAllReviews();
+    res.json({
+      status: "Database connected!",
+      reviewCount: reviews.length,
+      sampleReviews: reviews.slice(0, 3), // just show first 3
+    });
+  } else {
+    res.status(500).json({ status: "Database connection failed" });
+  }
 });
 
 // simple health check
