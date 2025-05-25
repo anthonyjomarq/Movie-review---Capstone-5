@@ -2,7 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import { testConnection, getStats, getAllReviews } from "./database/db.js";
+import {
+  testConnection,
+  getStats,
+  getAllReviews,
+  getReviewById,
+  addReview,
+  updateReview,
+  deleteReview,
+} from "./database/db.js";
 
 dotenv.config();
 
@@ -53,6 +61,91 @@ app.get("/db-test", async (req, res) => {
     });
   } else {
     res.status(500).json({ status: "Database connection failed" });
+  }
+});
+
+// show all reviews
+app.get("/reviews", async (req, res) => {
+  try {
+    const reviews = await getAllReviews();
+    res.render("reviews", {
+      title: "My Reviews",
+      reviews: reviews,
+    });
+  } catch (error) {
+    console.error("Error getting reviews:", error);
+    res.render("reviews", {
+      title: "My Reviews",
+      reviews: [],
+      error: "Could not load reviews",
+    });
+  }
+});
+
+// show add review form
+app.get("/add", (req, res) => {
+  res.render("add", { title: "Add Review" });
+});
+
+// handle adding new review
+app.post("/add", async (req, res) => {
+  try {
+    const { title, media_type, rating, review_text, notes } = req.body;
+    await addReview(title, media_type, parseInt(rating), review_text, notes);
+    res.redirect("/reviews");
+  } catch (error) {
+    console.error("Error adding review:", error);
+    res.render("add", {
+      title: "Add Review",
+      error: "Could not add review. Please try again.",
+    });
+  }
+});
+
+// show edit form
+app.get("/edit/:id", async (req, res) => {
+  try {
+    const review = await getReviewById(req.params.id);
+    if (!review) {
+      return res.redirect("/reviews");
+    }
+    res.render("edit", {
+      title: "Edit Review",
+      review: review,
+    });
+  } catch (error) {
+    console.error("Error getting review:", error);
+    res.redirect("/reviews");
+  }
+});
+
+// handle updating review
+app.post("/edit/:id", async (req, res) => {
+  try {
+    const { title, media_type, rating, review_text, notes } = req.body;
+    await updateReview(
+      req.params.id,
+      title,
+      media_type,
+      parseInt(rating),
+      review_text,
+      notes
+    );
+    res.redirect("/reviews");
+  } catch (error) {
+    console.error("Error updating review:", error);
+    res.redirect("/reviews");
+  }
+});
+
+// handle deleting review
+app.post("/delete/:id", async (req, res) => {
+  try {
+    await deleteReview(req.params.id);
+    res.redirect("/reviews");
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    res.redirect("/reviews");
   }
 });
 

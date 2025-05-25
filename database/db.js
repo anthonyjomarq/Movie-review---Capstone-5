@@ -42,13 +42,19 @@ export const getAllReviews = async () => {
   return result.rows;
 };
 
+// get single review by id
+export const getReviewById = async (id) => {
+  const result = await query("SELECT * FROM media_reviews WHERE id = $1", [id]);
+  return result.rows[0];
+};
+
 // get stats for dashboard
 export const getStats = async () => {
   const result = await query("SELECT * FROM media_stats");
   return result.rows[0];
 };
 
-// add a review (basic version for now)
+// add a review
 export const addReview = async (
   title,
   mediaType,
@@ -68,6 +74,41 @@ export const addReview = async (
     reviewText,
     notes,
   ]);
+  return result.rows[0];
+};
+
+// update a review
+export const updateReview = async (
+  id,
+  title,
+  mediaType,
+  rating,
+  reviewText,
+  notes
+) => {
+  const queryText = `
+        UPDATE media_reviews 
+        SET title = $1, media_type = $2, rating = $3, review_text = $4, notes = $5, updated_at = CURRENT_TIMESTAMP
+        WHERE id = $6
+        RETURNING *
+    `;
+  const result = await query(queryText, [
+    title,
+    mediaType,
+    rating,
+    reviewText,
+    notes,
+    id,
+  ]);
+  return result.rows[0];
+};
+
+// delete a review
+export const deleteReview = async (id) => {
+  const result = await query(
+    "DELETE FROM media_reviews WHERE id = $1 RETURNING *",
+    [id]
+  );
   return result.rows[0];
 };
 
