@@ -48,41 +48,60 @@
             <div class="reviews-grid">
                 <% reviews.forEach(review => { %>
                     <div class="review-card">
-                        <div class="review-header">
-                            <h3><%= review.title %></h3>
-                            <div class="media-type <%= review.media_type %>">
-                                <%= review.media_type.toUpperCase() %>
+                        <% if (review.poster_url) { %>
+                            <div class="review-poster">
+                                <img src="<%= review.poster_url %>" alt="<%= review.title %>">
                             </div>
-                        </div>
+                        <% } %>
                         
-                        <div class="rating">
-                            <span class="rating-score"><%= review.rating %>/10</span>
-                            <div class="stars">
-                                <% for (let i = 1; i <= 10; i++) { %>
-                                    <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
-                                <% } %>
+                        <div class="review-content-area">
+                            <div class="review-header">
+                                <h3><%= review.title %></h3>
+                                <div class="media-type <%= review.media_type %>">
+                                    <%= review.media_type.toUpperCase() %>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="review-content">
-                            <p class="review-text"><%= review.review_text %></p>
-                            <% if (review.notes) { %>
-                                <div class="notes">
-                                    <strong>Notes:</strong> <%= review.notes %>
+                            
+                            <% if (review.release_date || review.genre) { %>
+                                <div class="review-meta-info">
+                                    <% if (review.release_date) { %>
+                                        <span class="release-year"><%= new Date(review.release_date).getFullYear() %></span>
+                                    <% } %>
+                                    <% if (review.genre) { %>
+                                        <span class="genre"><%= review.genre %></span>
+                                    <% } %>
                                 </div>
                             <% } %>
-                        </div>
+                            
+                            <div class="rating">
+                                <span class="rating-score"><%= review.rating %>/10</span>
+                                <div class="stars">
+                                    <% for (let i = 1; i <= 10; i++) { %>
+                                        <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
+                                    <% } %>
+                                </div>
+                            </div>
 
-                        <div class="review-meta">
-                            <span class="date">Added: <%= new Date(review.created_at).toLocaleDateString() %></span>
-                            <div class="actions">
-                                <a href="/edit/<%= review.id %>" class="btn btn-small">Edit</a>
-                                <form method="POST" action="/delete/<%= review.id %>" style="display: inline;">
-                                    <button type="submit" class="btn btn-small btn-danger" 
-                                            onclick="return confirm('Are you sure you want to delete this review?')">
-                                        Delete
-                                    </button>
-                                </form>
+                            <div class="review-content">
+                                <p class="review-text"><%= review.review_text %></p>
+                                <% if (review.notes) { %>
+                                    <div class="notes">
+                                        <strong>Notes:</strong> <%= review.notes %>
+                                    </div>
+                                <% } %>
+                            </div>
+
+                            <div class="review-meta">
+                                <span class="date">Added: <%= new Date(review.created_at).toLocaleDateString() %></span>
+                                <div class="actions">
+                                    <a href="/edit/<%= review.id %>" class="btn btn-small">Edit</a>
+                                    <form method="POST" action="/delete/<%= review.id %>" style="display: inline;">
+                                        <button type="submit" class="btn btn-small btn-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this review?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

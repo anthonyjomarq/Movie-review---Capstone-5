@@ -31,6 +31,16 @@
             <h1>Edit: <%= review.title %></h1>
             
             <form method="POST" action="/edit/<%= review.id %>" class="review-form">
+                <!-- Preserve multi-API data -->
+                <input type="hidden" name="tmdb_id" value="<%= review.tmdb_id || '' %>">
+                <input type="hidden" name="mal_id" value="">
+                <input type="hidden" name="tvmaze_id" value="">
+                <input type="hidden" name="poster_url" value="<%= review.poster_url || '' %>">
+                <input type="hidden" name="backdrop_url" value="<%= review.backdrop_url || '' %>">
+                <input type="hidden" name="release_date" value="<%= review.release_date || '' %>">
+                <input type="hidden" name="genre" value="<%= review.genre || '' %>">
+                <input type="hidden" name="source" value="tmdb">
+
                 <div class="form-group">
                     <label for="title">Title *</label>
                     <input type="text" id="title" name="title" required 

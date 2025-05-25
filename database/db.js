@@ -54,52 +54,114 @@ export const getStats = async () => {
   return result.rows[0];
 };
 
-// add a review
-export const addReview = async (
-  title,
-  mediaType,
-  rating,
-  reviewText,
-  notes
-) => {
+// add a review with multi-API data
+export const addReview = async (reviewData) => {
+  console.log("addReview called with:", reviewData); // Debug log
+  console.log("reviewData type:", typeof reviewData); // Debug log
+
+  if (typeof reviewData === "string") {
+    console.error("ERROR: reviewData is a string, not an object!");
+    throw new Error("Invalid reviewData format");
+  }
+
+  const {
+    title,
+    media_type,
+    tmdb_id,
+    mal_id,
+    tvmaze_id,
+    poster_url,
+    backdrop_url,
+    release_date,
+    genre,
+    rating,
+    review_text,
+    notes,
+    source,
+  } = reviewData;
+
+  console.log("Extracted fields:", {
+    title,
+    media_type,
+    rating,
+    review_text,
+  }); // Debug log
+
   const queryText = `
-        INSERT INTO media_reviews (title, media_type, rating, review_text, notes)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO media_reviews (
+            title, media_type, tmdb_id, poster_url, backdrop_url, 
+            release_date, genre, rating, review_text, notes
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         RETURNING *
     `;
-  const result = await query(queryText, [
+
+  // Use the appropriate ID (TMDB, MAL, or TVMaze)
+  const external_id = tmdb_id || mal_id || tvmaze_id || null;
+
+  const values = [
     title,
-    mediaType,
+    media_type,
+    external_id,
+    poster_url,
+    backdrop_url,
+    release_date,
+    genre,
     rating,
-    reviewText,
+    review_text,
     notes,
-  ]);
+  ];
+
+  console.log("SQL values:", values); // Debug log
+
+  const result = await query(queryText, values);
   return result.rows[0];
 };
 
-// update a review
-export const updateReview = async (
-  id,
-  title,
-  mediaType,
-  rating,
-  reviewText,
-  notes
-) => {
+// update a review with multi-API data
+export const updateReview = async (id, reviewData) => {
+  const {
+    title,
+    media_type,
+    tmdb_id,
+    mal_id,
+    tvmaze_id,
+    poster_url,
+    backdrop_url,
+    release_date,
+    genre,
+    rating,
+    review_text,
+    notes,
+    source,
+  } = reviewData;
+
   const queryText = `
         UPDATE media_reviews 
-        SET title = $1, media_type = $2, rating = $3, review_text = $4, notes = $5, updated_at = CURRENT_TIMESTAMP
-        WHERE id = $6
+        SET title = $1, media_type = $2, tmdb_id = $3, poster_url = $4, backdrop_url = $5,
+            release_date = $6, genre = $7, rating = $8, review_text = $9, notes = $10,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = $11
         RETURNING *
     `;
+
+  // Use the appropriate ID (TMDB, MAL, or TVMaze)
+  const external_id = tmdb_id || mal_id || tvmaze_id || null;
+
   const result = await query(queryText, [
     title,
-    mediaType,
+    media_type,
+    external_id,
+    poster_url,
+    backdrop_url,
+    release_date,
+    genre,
     rating,
-    reviewText,
+    review_text,
     notes,
     id,
   ]);
+
   return result.rows[0];
 };
 
