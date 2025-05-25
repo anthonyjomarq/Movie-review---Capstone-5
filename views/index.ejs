@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="nav-logo">📺 Media Tracker</h1>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/reviews" class="nav-link">My Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/add" class="nav-link">Add Review</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="hero-title"><%= title %></h1>
+            <p class="hero-subtitle"><%= message %></p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p>Movies Reviewed</p>
+                </div>
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p>TV Series Watched</p>
+                </div>
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p>Anime Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="features-section">
+            <h2>What I'm Planning to Add</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>📝 Add Reviews</h3>
+                    <p>Write reviews for movies, TV shows and anime I've watched.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Search Movies</h3>
+                    <p>Use an API to search and get movie/show information automatically.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Sort My List</h3>
+                    <p>Sort reviews by rating or when I added them.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎯 Filter Content</h3>
+                    <p>Show just movies, or just TV shows, or just anime.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Media Review Tracker. Built with Express.js & PostgreSQL.</p>
+    </footer>
+
+    <script src="/scripts/main.js"></script>
+</body>
+</html>
