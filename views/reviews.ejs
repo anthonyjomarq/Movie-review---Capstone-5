@@ -45,12 +45,48 @@
                 <a href="/add" class="btn btn-primary">Add Your First Review</a>
             </div>
         <% } else { %>
-            <div class="reviews-grid">
+            <!-- Sort and Filter Controls -->
+            <div class="controls-section">
+                <div class="sort-control">
+                    <label for="sortSelect">Sort by:</label>
+                    <select id="sortSelect" class="sort-dropdown">
+                        <option value="review-date-desc">Recently Reviewed</option>
+                        <option value="review-date-asc">Oldest Reviews</option>
+                        <option value="release-date-desc">Newest Releases</option>
+                        <option value="release-date-asc">Oldest Releases</option>
+                        <option value="rating-desc">Highest Rating</option>
+                        <option value="rating-asc">Lowest Rating</option>
+                        <option value="title-asc">Title A-Z</option>
+                        <option value="title-desc">Title Z-A</option>
+                    </select>
+                </div>
+                
+                <div class="filter-control">
+                    <label>Filter by type:</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All (<%= reviews.length %>)</button>
+                        <button class="filter-btn" data-filter="movie">Movies (<%= reviews.filter(r => r.media_type === 'movie').length %>)</button>
+                        <button class="filter-btn" data-filter="tv">TV Shows (<%= reviews.filter(r => r.media_type === 'tv').length %>)</button>
+                        <button class="filter-btn" data-filter="anime">Anime (<%= reviews.filter(r => r.media_type === 'anime').length %>)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reviews-grid" id="reviewsGrid">
                 <% reviews.forEach(review => { %>
-                    <div class="review-card">
+                    <div class="review-card" 
+                         data-rating="<%= review.rating %>" 
+                         data-title="<%= review.title.toLowerCase() %>" 
+                         data-review-date="<%= new Date(review.created_at).getTime() %>" 
+                         data-release-date="<%= review.release_date ? new Date(review.release_date).getTime() : 0 %>"
+                         data-type="<%= review.media_type %>">
                         <% if (review.poster_url) { %>
                             <div class="review-poster">
                                 <img src="<%= review.poster_url %>" alt="<%= review.title %>">
+                            </div>
+                        <% } else { %>
+                            <div class="review-poster">
+                                <div class="no-poster">No Poster<br>Available</div>
                             </div>
                         <% } %>
                         
@@ -115,5 +151,6 @@
     </footer>
 
     <script src="/scripts/main.js"></script>
+    <script src="/scripts/reviews.js"></script>
 </body>
 </html>
